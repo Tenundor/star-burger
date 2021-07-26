@@ -60,9 +60,18 @@ def product_list_api(request):
     })
 
 
+def validate_products_in_order(order):
+    products = order.get('products')
+    if not products or not isinstance(products, list):
+        return False
+    return True
+
+
 @api_view(['POST'])
 def register_order(request):
     order_request = request.data
+    if not validate_products_in_order(order_request):
+        return Response({'error': 'products key not presented or not list'})
     order = Order.objects.create(
         address=order_request['address'],
         firstname=order_request['firstname'],
